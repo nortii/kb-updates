@@ -9,12 +9,15 @@ const fs = require("fs"), path = require("path"), crypto = require("crypto"), zl
 const FORMAT = "korn-update/1";
 const need = (k) => { const v = (process.env[k] || "").trim(); if (!v) throw new Error(`секрет ${k} не задано`); return v; };
 const b64 = (s) => Buffer.from(String(s).replace(/-/g, "+").replace(/_/g, "/"), "base64");
-const signKey = crypto.createPrivateKey({ key: b64(need("KORN_SIGN_KEY")), format: "der", type: "pkcs8" });
-const delivery = b64(need("KORN_DELIVERY_KEY"));
-const inboxKey = crypto.createPrivateKey({ key: b64(need("KORN_INBOX_KEY")), format: "der", type: "pkcs8" });
-if (delivery.length !== 32) throw new Error("KORN_DELIVERY_KEY має бути 32 байти (base64)");
-const pubDer = crypto.createPublicKey(signKey).export({ format: "der", type: "spki" });
-const fp = crypto.createHash("sha256").update(pubDer).digest("hex").toUpperCase().slice(0, 16).match(/.{4}/g).join("-");
+let signKey, delivery, inboxKey, fp;
+function loadKeys() {
+  signKey = crypto.createPrivateKey({ key: b64(need("KORN_SIGN_KEY")), format: "der", type: "pkcs8" });
+  delivery = b64(need("KORN_DELIVERY_KEY"));
+  inboxKey = crypto.createPrivateKey({ key: b64(need("KORN_INBOX_KEY")), format: "der", type: "pkcs8" });
+  if (delivery.length !== 32) throw new Error("KORN_DELIVERY_KEY має бути 32 байти (base64)");
+  const pubDer = crypto.createPublicKey(signKey).export({ format: "der", type: "spki" });
+  fp = crypto.createHash("sha256").update(pubDer).digest("hex").toUpperCase().slice(0, 16).match(/.{4}/g).join("-");
+}
 
 function parseVer(v) { const m = String(v || "").match(/^(\d+)\.(\d+)\.(\d+)/); return m ? [+m[1], +m[2], +m[3]] : [0, 0, 0]; }
 function newer(a, b) { const x = parseVer(a), y = parseVer(b); for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] > y[i]; return false; }
@@ -45,6 +48,7 @@ function openInbox(file) {
 const root = process.cwd();
 const inbox = fs.existsSync("inbox") ? fs.readdirSync("inbox").filter((f) => f.endsWith(".kin")).sort() : [];
 if (!inbox.length) { console.log("у скриньці нічого немає"); process.exit(0); }
+loadKeys();
 let cur = null; try { cur = JSON.parse(fs.readFileSync("korn-update.json", "utf8")); } catch {}
 const report = [];
 for (const f of inbox) {
