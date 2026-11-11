@@ -1,0 +1,30 @@
+name: sign
+on:
+  push:
+    branches: [main]
+    paths: ["inbox/**"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: { group: sign, cancel-in-progress: false }
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - name: sign
+        env:
+          KORN_SIGN_KEY: ${{ secrets.KORN_SIGN_KEY }}
+          KORN_DELIVERY_KEY: ${{ secrets.KORN_DELIVERY_KEY }}
+          KORN_INBOX_KEY: ${{ secrets.KORN_INBOX_KEY }}
+        run: node .github/korn-sign.js
+      - name: publish
+        run: |
+          git config user.name "kb-sign"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -m "sign: $(head -2 last-release.txt | tail -1 | cut -c1-120)"
+          git push
