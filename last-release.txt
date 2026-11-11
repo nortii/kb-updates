@@ -1,2 +1,2 @@
-2026-11-11T19:25:51.094Z
-✕ KORN-BOT_v0.63.1.kin: error:02000084:rsa routines::data too large for modulus
+2026-11-11T19:26:49.715Z
+✓ 0.63.1: KORN-BOT_v0.63.1.kpkg (2066070 Б, sha256 5012b6b1e7ff…), підписано ключем 773F-BA7D-2E88-975C
