@@ -47,7 +47,13 @@ function openInbox(file) {
 }
 const root = process.cwd();
 const inbox = fs.existsSync("inbox") ? fs.readdirSync("inbox").filter((f) => f.endsWith(".kin")).sort() : [];
-if (!inbox.length) { console.log("у скриньці нічого немає"); process.exit(0); }
+// публічна половина ключа скриньки і відбиток ключа підпису — з самих секретів (щоб Claude шифрував саме для них)
+if (process.env.KORN_INBOX_KEY && process.env.KORN_SIGN_KEY) {
+  loadKeys();
+  fs.writeFileSync("inbox.pub", crypto.createPublicKey(inboxKey).export({ format: "der", type: "spki" }).toString("base64") + "\n");
+  fs.writeFileSync("sign-key.txt", fp + "\n");
+}
+if (!inbox.length) { console.log("у скриньці нічого немає; ключ підпису " + (fp || "—")); process.exit(0); }
 loadKeys();
 let cur = null; try { cur = JSON.parse(fs.readFileSync("korn-update.json", "utf8")); } catch {}
 const report = [];
