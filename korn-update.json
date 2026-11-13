@@ -1,10 +1,10 @@
 {
  "format": "korn-update/1",
- "version": "0.68.11",
- "file": "KORN-BOT_v0.68.11.kpkg",
- "size": 4478383,
- "sha256": "cdc236d961d6d7c3d8ca9d72df3112298086046f89c28b931d1293119981310a",
- "made": "2026-11-13T12:31:02.455Z",
- "sig": "cT7+FZfaUzypoKnIKjjlfPJTf0RjBk7mzfInriJYZVheYNtIHqvO+C5w1b5FNIB73hoKVr4we+tUrEi1X43GBA==",
+ "version": "0.68.12",
+ "file": "KORN-BOT_v0.68.12.kpkg",
+ "size": 4481096,
+ "sha256": "565bbc4088ebd4e255d05ee9505b7b1862677ab3b362f42be641a562c4ccb80f",
+ "made": "2026-11-13T13:33:43.614Z",
+ "sig": "dTeNCu7n6G4vGS1uJjfoLbls/kaPRkqOJv3DMLfoibyCoAaQIdPi1/pHKhZwv7xpUybxjJMaNkcgzJ8Kt1RmSw==",
  "key": "773F-BA7D-2E88-975C"
 }
